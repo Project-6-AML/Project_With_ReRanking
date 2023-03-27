@@ -44,8 +44,6 @@ def get_model(
     keys = list(map(lambda x: x.lower(), __all__))
     index = keys.index(arch.lower())
     arch = __all__[index]
-    prova = __dict__["resnet50"]
-    prova18 = __dict__["resnet18"]
     return __dict__[arch](num_classes=num_classes, num_global_features=num_global_features, num_local_features=num_local_features, pretrained=pretrained, dropout=dropout,
                           norm_layer=norm_layer, detach=detach, remap=remap, normalize=normalize,
                           normalize_weight=normalize_weight, set_bn_eval=set_bn_eval, freeze_backbone=freeze_backbone, 
@@ -53,9 +51,9 @@ def get_model(
                           ert_nhead=ert_nhead, ert_num_encoder_layers=ert_num_encoder_layers, 
                           ert_dropout=ert_dropout, ert_activation=ert_activation, ert_normalize_before=ert_normalize_before)
 
-if __name__ == "__main__":
+""" if __name__ == "__main__":
     get_model(num_classes=10, arch = 'resnet18',
-    pretrained = False,  # use a pretrained model from torchvision
+    pretrained = True,  # use a pretrained model from torchvision
     dropout = 0.,
     norm_layer = None,  # use a normalization layer (batchnorm or layernorm) for the features
     remap = False,  # remap features through a linear layer
@@ -77,3 +75,4 @@ if __name__ == "__main__":
     ert_activation="relu",
     ert_normalize_before=False)
     print("FINITO")
+ """
