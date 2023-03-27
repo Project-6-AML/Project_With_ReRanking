@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import torch
 import torch.nn as nn
@@ -9,10 +9,10 @@ from torch.optim import Optimizer
 from torch.optim.lr_scheduler import _LRScheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from visdom_logger import VisdomLogger
+#from visdom_logger import VisdomLogger
 from copy import deepcopy
 
-from utils.metrics import *
+#from utils.metrics import *
 
 
 ###################################################################

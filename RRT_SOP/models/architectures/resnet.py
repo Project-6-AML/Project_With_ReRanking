@@ -2,13 +2,13 @@ from typing import List, Optional, Tuple
 
 import torch
 import torch.nn as nn
-from torchvision.models.resnet import conv1x1, BasicBlock, Bottleneck, ResNet50_Weights,ResNet18_Weights
+from torchvision.models.resnet import conv1x1, BasicBlock, Bottleneck
 from torch.hub import load_state_dict_from_url
 import sys
 
-sys.path.append("../models/base_models")
+#sys.path.append("../models")
 
-from base_model import BaseModel
+from models.base_model import BaseModel
 from copy import deepcopy
 
 

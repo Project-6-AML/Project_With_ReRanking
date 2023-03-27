@@ -1,6 +1,6 @@
 from sacred import Ingredient
 
-from architectures import __all__, __dict__
+from .architectures import __all__, __dict__
 
 model_ingredient = Ingredient('model')
 
@@ -51,7 +51,7 @@ def get_model(
                           ert_nhead=ert_nhead, ert_num_encoder_layers=ert_num_encoder_layers, 
                           ert_dropout=ert_dropout, ert_activation=ert_activation, ert_normalize_before=ert_normalize_before)
 
-""" if __name__ == "__main__":
+if __name__ == "__main__":
     get_model(num_classes=10, arch = 'resnet18',
     pretrained = True,  # use a pretrained model from torchvision
     dropout = 0.,
@@ -75,4 +75,3 @@ def get_model(
     ert_activation="relu",
     ert_normalize_before=False)
     print("FINITO")
- """
