@@ -2,10 +2,13 @@ from typing import List, Optional, Tuple
 
 import torch
 import torch.nn as nn
-from torchvision.models.resnet import conv1x1, BasicBlock, Bottleneck, model_urls
-from torchvision.models.utils import load_state_dict_from_url
+from torchvision.models.resnet import conv1x1, BasicBlock, Bottleneck, ResNet50_Weights
+from torch.hub import load_state_dict_from_url
+import sys
 
-from models.base_model import BaseModel
+sys.path.append("../models/base_models")
+
+from base_model import BaseModel
 from copy import deepcopy
 
 
@@ -155,7 +158,7 @@ class ResNet(BaseModel):
 def _resnet(arch: str, block: nn.Module, layers: List[int], pretrained: bool, progress: bool, **kwargs) -> nn.Module:
     model = ResNet(block, layers, **kwargs)
     if pretrained:
-        state_dict = load_state_dict_from_url(model_urls[arch],
+        state_dict = load_state_dict_from_url(ResNet50_Weights,
                                               progress=progress)
         model.load_state_dict(state_dict, strict=False)
     return model
@@ -172,3 +175,5 @@ def resnet50(pretrained: bool = False, progress: bool = True, **kwargs) -> nn.Mo
     return _resnet('resnet50', Bottleneck, [3, 4, 6, 3], pretrained, progress,
                    **kwargs)
 
+def resnet18(pretrained: bool = False, progress: bool = True, **kwargs) -> nn.Module:
+    return _resnet("resnet18", BasicBlock, [2,2,2,2], pretrained, progress, **kwargs)

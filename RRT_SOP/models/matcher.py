@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .position_encoding import PositionEmbeddingSine, PositionEmbeddingLearned
-from .transformer import TransformerEncoder, TransformerEncoderLayer
+from position_encoding import PositionEmbeddingSine, PositionEmbeddingLearned
+from transformer import TransformerEncoder, TransformerEncoderLayer
 
 
 class MatchERT(nn.Module):
