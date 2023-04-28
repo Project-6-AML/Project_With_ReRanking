@@ -105,7 +105,7 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     utmeast_utmnorth_heading = np.array(utmeast_utmnorth_heading).astype(np.float)
     
     logging.debug("For each image, get class and group to which it belongs")
-    class_id = [get__class_id(*m, M, alpha, N, L)
+    class_id = [get__class_id(*m, M, alpha)
                             for m in utmeast_utmnorth_heading]
     
     logging.debug("Group together images belonging to the same class")
@@ -138,9 +138,9 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     queries_utms = np.array([(path.split("@")[1], path.split("@")[2]) for path in queries_paths]).astype(float)
      
     # img, class_id
-    class_id_database = [get__class_id(*m, M, alpha, N, L)
+    class_id_database = [get__class_id(*m, M, alpha)
                             for m in database_utms]
-    class_id_queries = [get__class_id(*m, M, alpha, N, L)
+    class_id_queries = [get__class_id(*m, M, alpha)
                             for m in queries_utms]
     
     images_per_class_database = defaultdict(list)
