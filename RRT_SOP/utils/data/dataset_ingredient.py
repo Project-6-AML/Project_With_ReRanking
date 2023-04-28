@@ -3,7 +3,7 @@ import os
 from typing import NamedTuple, Optional
 
 import logging
-import glob
+from glob import glob
 from collections import defaultdict
 from sacred import Ingredient
 from torch.utils.data import DataLoader, RandomSampler, BatchSampler
