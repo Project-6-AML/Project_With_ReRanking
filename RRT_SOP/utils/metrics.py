@@ -177,7 +177,7 @@ def recall_at_ks_rerank(
     ######################################################################
     print('--------------------------------------------')
     print('Start reranking')
-    for i in tqdm(range(top_k)):
+    for i in tqdm(range(top_k)): #top_k = 20
         k_scores = []
         for j in range(0, num_samples, bsize):
             current_query = query_features[j:(j+bsize)]
