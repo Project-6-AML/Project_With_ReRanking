@@ -117,7 +117,7 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     # is a list with the paths of images within that class.
     images_per_class = [(v, k) for k, v in images_per_class.items() if len(v) >= min_images_per_class]
     
-    samples = [item for sublist in images_per_class for item in sublist]
+    samples = [(img, sublist[1]) for sublist in images_per_class for img in sublist[0]]
 
     train_set = ImageDataset(samples=samples, transform=None)
 
