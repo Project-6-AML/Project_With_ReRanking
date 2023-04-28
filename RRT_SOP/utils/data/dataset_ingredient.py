@@ -22,8 +22,8 @@ data_ingredient = Ingredient('dataset')
 def config():
     name = 'sop'
     data_path = 'data/Stanford_Online_Products'
-    train_file = 'train.txt'
-    test_file = 'test.txt'
+    train_folder = 'train.txt'
+    test_folder = 'test.txt'
 
     batch_size = 128
     sample_per_id = 2
@@ -85,17 +85,17 @@ def read_file(filename):
 
 
 @data_ingredient.capture
-def get_sets(name, data_path, train_file, test_file, num_workers, M=10, alpha=30, N=5, L=2,
+def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alpha=30, N=5, L=2,
                  current_group=0, min_images_per_class=10, queries_folder_name = "queries",
                  positive_dist_threshold=25):
 
     # Open training folder
-    logging.debug(f"Searching training images in {train_file}")
+    logging.debug(f"Searching training images in {train_folder}")
         
-    if not os.path.exists(train_file):
-        raise FileNotFoundError(f"Folder {train_file} does not exist")
+    if not os.path.exists(train_folder):
+        raise FileNotFoundError(f"Folder {train_folder} does not exist")
         
-    images_paths = sorted(glob(f"{train_file}/**/*.jpg", recursive=True))
+    images_paths = sorted(glob(f"{train_folder}/**/*.jpg", recursive=True))
     logging.debug(f"Found {len(images_paths)} images")
         
     logging.debug("For each image, get its UTM east, UTM north and heading from its path")
@@ -122,8 +122,8 @@ def get_sets(name, data_path, train_file, test_file, num_workers, M=10, alpha=30
     train_set = ImageDataset(samples=samples)
 
     # Open test/val folder
-    database_folder = os.path.join(test_file, "database")
-    queries_folder = os.path.join(test_file, queries_folder_name)
+    database_folder = os.path.join(test_folder, "database")
+    queries_folder = os.path.join(test_folder, queries_folder_name)
 
     base_transform = transforms.Compose([
             transforms.ToTensor(),
@@ -192,7 +192,7 @@ def get_loaders(batch_size, test_batch_size,
         train_cache_nn_inds=None,
         test_cache_nn_inds=None):
 
-    # TODO Add train_file and test_file in the get_sets() function
+    # TODO Add train_folder and test_folder in the get_sets() function
     train_set, (query_set, gallery_set) = get_sets()
 
     if sampler == 'random':
