@@ -119,7 +119,7 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     
     samples = [item for sublist in images_per_class for item in sublist]
 
-    train_set = ImageDataset(samples=samples)
+    train_set = ImageDataset(samples=samples, transform=None)
 
     # Open test/val folder
     database_folder = os.path.join(test_folder, "database")
