@@ -133,9 +133,9 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     database_paths = sorted(glob(os.path.join(database_folder, "**", "*.jpg"), recursive=True))
     queries_paths = sorted(glob(os.path.join(queries_folder, "**", "*.jpg"),  recursive=True))
         
-    # The format must be path/to/file/@utm_easting@utm_northing@...@.jpg
-    database_utms = np.array([(path.split("@")[1], path.split("@")[2]) for path in database_paths]).astype(float)
-    queries_utms = np.array([(path.split("@")[1], path.split("@")[2]) for path in queries_paths]).astype(float)
+    # The format must be path/to/file/@utm_easting@utm_northing@...@heading@....@.jpg
+    database_utms = np.array([(path.split("@")[1], path.split("@")[2], path.split("@")[9]) for path in database_paths]).astype(float)
+    queries_utms = np.array([(path.split("@")[1], path.split("@")[2], path.split("@")[9]) for path in queries_paths]).astype(float)
      
     # img, class_id
     class_id_database = [get__class_id(*m, M, alpha)
