@@ -164,8 +164,8 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
                                                     radius=positive_dist_threshold,
                                                     return_distance=False)
         
-    with open("rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb") as f:
-        pickle.dump(positives_per_query, f)
+    # with open("rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb") as f:
+    #     pickle.dump(positives_per_query, f)
     
     # queries_v1 folder
     query_set = ImageDataset(samples=samples_queries, transform=base_transform)
