@@ -61,8 +61,8 @@ def sop_rerank():
     # Recall 1, 5, 10, 20
     recalls = [1, 10, 100]
 
-    train_cache_nn_inds  = 'rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl'
-    test_cache_nn_inds   = 'rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl'
+    #train_cache_nn_inds  = 'rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl'
+    #test_cache_nn_inds   = 'rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl'
 
 
 @data_ingredient.capture
