@@ -31,7 +31,7 @@ def config():
     test_batch_size = 256
     sampler = 'random'
 
-    num_workers = 8  
+    num_workers = 1 #8  
     pin_memory = True
 
     crop_size = 224
@@ -147,16 +147,16 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     for image_path, class_id in zip(database_paths, class_id_database):
         images_per_class_database[class_id].append(image_path)
 
-    images_per_class_database = [(v, k) for k, v in images_per_class_database.items() if len(v) >= min_images_per_class]
+    images_per_class_database = [(v, k) for k, v in images_per_class_database.items()]
 
     images_per_class_queries = defaultdict(list)
     for image_path, class_id in zip(queries_paths, class_id_queries):
         images_per_class_queries[class_id].append(image_path)
     
-    images_per_class_queries = [(v, k) for k, v in images_per_class_queries.items() if len(v) >= min_images_per_class]
+    images_per_class_queries = [(v, k) for k, v in images_per_class_queries.items()]
 
-    samples_database = [item for sublist in images_per_class_database for item in sublist]
-    samples_queries = [item for sublist in images_per_class_queries for item in sublist]
+    samples_database = [(img, sublist[1]) for sublist in images_per_class_database for img in sublist[0]]
+    samples_queries = [(img, sublist[1]) for sublist in images_per_class_queries for img in sublist[0]]
 
     knn = NearestNeighbors(n_jobs=-1)
     knn.fit(database_utms)
