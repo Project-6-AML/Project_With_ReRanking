@@ -22,8 +22,8 @@ data_ingredient = Ingredient('dataset')
 def config():
     name = 'sop'
     data_path = 'data/Stanford_Online_Products'
-    train_folder = '/content/drive/MyDrive/small/train'
-    test_folder = '/content/drive/MyDrive/small/val'
+    train_folder = '/content/drive/MyDrive/sf-xs/small/train'
+    test_folder = '/content/drive/MyDrive/sf-xs/small/val'
 
     batch_size = 128
     sample_per_id = 2
@@ -61,8 +61,8 @@ def sop_rerank():
     # Recall 1, 5, 10, 20
     recalls = [1, 10, 100]
 
-    train_cache_nn_inds  = 'rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl'
-    test_cache_nn_inds   = 'rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl'
+    #train_cache_nn_inds  = 'rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl'
+    #test_cache_nn_inds   = 'rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl'
 
 
 @data_ingredient.capture
@@ -133,7 +133,7 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     database_paths = sorted(glob(os.path.join(database_folder, "**", "*.jpg"), recursive=True))
     queries_paths = sorted(glob(os.path.join(queries_folder, "**", "*.jpg"),  recursive=True))
         
-    # The format must be path/to/file/@utm_easting@utm_northing@...@.jpg
+    # The format must be path/to/file/@utm_easting@utm_northing@...@heading@....@.jpg
     database_utms = np.array([(path.split("@")[1], path.split("@")[2], path.split("@")[9]) for path in database_paths]).astype(float)
     queries_utms = np.array([(path.split("@")[1], path.split("@")[2], path.split("@")[9]) for path in queries_paths]).astype(float)
      
@@ -164,8 +164,8 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
                                                     radius=positive_dist_threshold,
                                                     return_distance=False)
         
-    with open("rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb") as f:
-        pickle.dump(positives_per_query, f)
+    # with open("rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb") as f:
+    #     pickle.dump(positives_per_query, f)
     
     # queries_v1 folder
     query_set = ImageDataset(samples=samples_queries, transform=base_transform)
