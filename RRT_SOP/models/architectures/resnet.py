@@ -158,7 +158,7 @@ class ResNet(BaseModel):
 def _resnet(arch: str, block: nn.Module, layers: List[int], pretrained: bool, progress: bool, **kwargs) -> nn.Module:
     model = ResNet(block, layers, **kwargs)
     if pretrained:
-        state_dict = load_state_dict_from_url("https://download.pytorch.org/models/resnet18-5c106cde.pth",
+        state_dict = torch.hub.load_state_dict_from_url("https://download.pytorch.org/models/resnet18-5c106cde.pth",
                                               progress=progress)
         model.load_state_dict(state_dict, strict=False) 
     return model
