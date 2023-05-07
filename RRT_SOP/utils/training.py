@@ -12,7 +12,7 @@ from tqdm import tqdm
 #from visdom_logger import VisdomLogger
 from copy import deepcopy
 
-#from utils.metrics import *
+from utils.metrics import *
 
 
 ###################################################################
