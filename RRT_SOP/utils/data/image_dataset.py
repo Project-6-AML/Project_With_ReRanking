@@ -1,5 +1,6 @@
 from PIL import Image
 from torch.utils.data import Dataset
+from torchvision import transforms
 
     # imagine1: classe1
     # imagine2: classe1
@@ -20,6 +21,7 @@ class ImageDataset(Dataset):
     def __getitem__(self, index):
         image_path, label = self.samples[index]
         image = Image.open(image_path).convert('RGB')
+        image = transforms.ToTensor(image)
 
         if self.transform is not None:
             image = self.transform(image)
