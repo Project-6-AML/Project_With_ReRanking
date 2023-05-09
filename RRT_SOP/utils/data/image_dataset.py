@@ -21,7 +21,6 @@ class ImageDataset(Dataset):
     def __getitem__(self, index):
         image_path, label = self.samples[index]
         image = Image.open(image_path).convert('RGB')
-        image = transforms.ToTensor(image)
 
         if self.transform is not None:
             image = self.transform(image)
