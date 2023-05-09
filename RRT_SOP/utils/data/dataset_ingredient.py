@@ -167,9 +167,17 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     positives_per_query = knn.radius_neighbors(queries_utms,
                                                     radius=positive_dist_threshold,
                                                     return_distance=False)
-        
+    distances, indices = knn.kneighbors(queries_utms, n_neighbors=15)
+    
+    temp = [(x,y) for x, y in zip(distances, indices)]
+
+    temp = sorted(temp, key=lambda x: x[0], reverse=True)
+
+    # 15 indici dei punti più vicini (per ogni query)
+    indices = [x[1] for x in temp]
+    
     with open("rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb") as f:
-        pickle.dump(positives_per_query, f)
+        pickle.dump(indices, f)
     
     # queries_v1 folder
     query_set = ImageDataset(samples=samples_queries, transform=base_transform)
