@@ -36,7 +36,7 @@ def config():
     temp_dir = osp.join('logs', 'temp')
     no_bias_decay = False
     resume = None
-    cache_nn_inds = 'rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl'
+    cache_nn_inds = '/content/Project_With_ReRanking/RRT_SOP/rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl'
     seed = 459858808
 
 
@@ -72,8 +72,8 @@ def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_n
     class_loss = get_loss()
 
     # Rerank the top-15 only during training to save time
-    #cache_nn_inds = pickle_load(cache_nn_inds)[:, :15]
-    #cache_nn_inds = torch.from_numpy(cache_nn_inds)
+    cache_nn_inds = pickle_load(cache_nn_inds)[:, :15]
+    cache_nn_inds = torch.from_numpy(cache_nn_inds)
 
     model.to(device)
     # if torch.cuda.device_count() > 1:
