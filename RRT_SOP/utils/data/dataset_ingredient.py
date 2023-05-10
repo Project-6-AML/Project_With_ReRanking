@@ -28,7 +28,7 @@ def config():
     batch_size = 128
     sample_per_id = 2
     assert (batch_size % sample_per_id == 0)
-    test_batch_size = 256
+    test_batch_size = 128
     sampler = 'random'
 
     num_workers = 1 #8  
@@ -168,13 +168,6 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
                                                     radius=positive_dist_threshold,
                                                     return_distance=False)
     distances, indices = knn.kneighbors(queries_utms, n_neighbors=15)
-    
-    temp = [(x,y) for x, y in zip(distances, indices)]
-
-    temp = sorted(temp, key=lambda x: x[0], reverse=True)
-
-    # 15 indici dei punti più vicini (per ogni query)
-    indices = [x[1] for x in temp]
     
     with open("rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb") as f:
         pickle.dump(indices, f)
