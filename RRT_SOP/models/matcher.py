@@ -46,6 +46,7 @@ class MatchERT(nn.Module):
         # tgt_global = tgt_global.unsqueeze(1) + self.seg_encoder(5 * src_local.new_ones((bsize, 1),  dtype=torch.long)).permute(0, 2, 1)
         
         # global features were not used in the final model
+        print(f"cls_embed dimensions: {cls_embed.size()} \n src_local dimansions: {src_local.size()} \n sep_embed dimensions: {sep_embed.size()} \n tgt_local dimensions: {tgt_local.size()}")
         input_feats = torch.cat([cls_embed, src_local, sep_embed, tgt_local], -1).permute(2, 0, 1)
         logits = self.encoder(input_feats)[0]
         return self.classifier(logits).view(-1)
