@@ -25,10 +25,10 @@ def config():
     train_folder = '/content/drive/MyDrive/small/train'
     test_folder = '/content/drive/MyDrive/small/val'
 
-    batch_size = 128
-    sample_per_id = 2
+    batch_size = 33
+    sample_per_id = 3
     assert (batch_size % sample_per_id == 0)
-    test_batch_size = 128
+    test_batch_size = 64
     sampler = 'random'
 
     num_workers = 1 #8  
@@ -197,7 +197,6 @@ def get_loaders(batch_size, test_batch_size,
         train_cache_nn_inds=None,
         test_cache_nn_inds=None):
 
-    # TODO Add train_folder and test_folder in the get_sets() function
     train_set, (query_set, gallery_set) = get_sets()
 
     if sampler == 'random':
