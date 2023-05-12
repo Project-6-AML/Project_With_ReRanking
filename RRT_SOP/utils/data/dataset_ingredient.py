@@ -29,7 +29,7 @@ def config():
     sample_per_id = 3
     assert (batch_size % sample_per_id == 0)
     test_batch_size = 64
-    sampler = 'random'
+    sampler = 'triplet' #"random"
 
     num_workers = 1 #8  
     pin_memory = True
