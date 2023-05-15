@@ -172,7 +172,7 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     with open("/content/Project_With_ReRanking/RRT_SOP/rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb") as f:
         pickle.dump(indices, f)
 
-    with open("/content/Project_With_ReRanking/RRT_SOP/rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl") as f:
+    with open("/content/Project_With_ReRanking/RRT_SOP/rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl", "wb") as f:
         pickle.dump(positives_per_query, f)
     
     # queries_v1 folder
