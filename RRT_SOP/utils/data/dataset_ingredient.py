@@ -40,7 +40,7 @@ def config():
     num_identities = batch_size // sample_per_id 
     num_iterations = 59551 // batch_size
 
-    train_cache_nn_inds  = 'rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl'
+    train_cache_nn_inds  = '/content/Project_With_ReRanking/RRT_SOP/rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl'
     test_cache_nn_inds   = None
 
 
