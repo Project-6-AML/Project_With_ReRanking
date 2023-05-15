@@ -204,6 +204,7 @@ def get_loaders(batch_size, test_batch_size,
     elif sampler == 'triplet':
         if train_cache_nn_inds and osp.exists(train_cache_nn_inds):
             train_sampler = TripletSampler(train_set.targets, batch_size, train_cache_nn_inds)
+            print(f"Using triplet sampler")
         else:
             # For evaluation only
             train_sampler = None
