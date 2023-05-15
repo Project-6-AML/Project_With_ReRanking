@@ -201,6 +201,7 @@ def get_loaders(batch_size, test_batch_size,
 
     if sampler == 'random':
         train_sampler = BatchSampler(RandomSampler(train_set), batch_size=batch_size, drop_last=True)
+        print(f"Using random sampler")
     elif sampler == 'triplet':
         if train_cache_nn_inds and osp.exists(train_cache_nn_inds):
             train_sampler = TripletSampler(train_set.targets, batch_size, train_cache_nn_inds)
@@ -208,9 +209,11 @@ def get_loaders(batch_size, test_batch_size,
         else:
             # For evaluation only
             train_sampler = None
+            print(f"Using the for evaluation only sampler")
     elif sampler == 'random_id':
         train_sampler = RandomReplacedIdentitySampler(train_set.targets, batch_size, 
             num_identities=num_identities, num_iterations=num_iterations)
+        print(f"Using random_id sampler")
     else:
         raise ValueError('Invalid choice of sampler ({}).'.format(sampler))
     train_loader = DataLoader(train_set, batch_sampler=train_sampler, num_workers=num_workers, pin_memory=pin_memory)
