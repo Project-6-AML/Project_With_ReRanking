@@ -40,7 +40,7 @@ def config():
     num_identities = batch_size // sample_per_id 
     num_iterations = 59551 // batch_size
 
-    train_cache_nn_inds  = None
+    train_cache_nn_inds  = 'rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl'
     test_cache_nn_inds   = None
 
 
@@ -171,6 +171,9 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     
     with open("/content/Project_With_ReRanking/RRT_SOP/rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb") as f:
         pickle.dump(indices, f)
+
+    with open("/content/Project_With_ReRanking/RRT_SOP/rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl") as f:
+        pickle.dump(positives_per_query, f)
     
     # queries_v1 folder
     query_set = ImageDataset(samples=samples_queries, transform=base_transform)
