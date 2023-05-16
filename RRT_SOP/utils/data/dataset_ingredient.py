@@ -25,8 +25,8 @@ def config():
     train_folder = '/content/drive/MyDrive/small/train'
     test_folder = '/content/drive/MyDrive/small/val'
 
-    batch_size = 33
-    sample_per_id = 3
+    batch_size = 32
+    sample_per_id = 2
     assert (batch_size % sample_per_id == 0)
     test_batch_size = 64
     sampler = 'triplet' #"random"
@@ -128,9 +128,10 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     positives_per_query = knn.radius_neighbors(utmeast_utmnorth_heading,
                                                     radius=positive_dist_threshold,
                                                     return_distance=False)
+    distances, indices = knn.kneighbors(utmeast_utmnorth_heading, n_neighbors=15)
     
     with open("/content/Project_With_ReRanking/RRT_SOP/rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl", "wb") as f:
-        pickle.dump(positives_per_query, f)
+        pickle.dump(indices, f)
 
     train_set = ImageDataset(samples=samples, transform=train_transform)
 

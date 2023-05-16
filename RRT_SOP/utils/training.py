@@ -85,7 +85,7 @@ def train_rerank(model: nn.Module,
         anchors   = l[0::3]
         positives = l[1::3]
         negatives = l[2::3]
-        print(f"anchors: {anchors.size()}, positives: {positives.size()}, negatives: {negatives.size()}")
+        #print(f"anchors: {anchors.size()}, positives: {positives.size()}, negatives: {negatives.size()}")
         p_logits, _, _ = model(None, True, src_global=None, src_local=anchors, tgt_global=None, tgt_local=positives)
         n_logits, _, _ = model(None, True, src_global=None, src_local=anchors, tgt_global=None, tgt_local=negatives)
         logits = torch.cat([p_logits, n_logits], 0)

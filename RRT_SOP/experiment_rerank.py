@@ -26,7 +26,7 @@ ex.captured_out_filter = apply_backspaces_and_linefeeds
 
 @ex.config
 def config():
-    epochs = 100
+    epochs = 3
     lr = 0.0001
     weight_decay = 4e-4
     scheduler_tau = [60, 80]
