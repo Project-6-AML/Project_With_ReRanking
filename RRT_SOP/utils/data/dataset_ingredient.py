@@ -123,6 +123,15 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
             transforms.ToTensor(),
         ])
 
+    knn = NearestNeighbors(n_jobs=-1)
+    knn.fit(utmeast_utmnorth_heading)
+    positives_per_query = knn.radius_neighbors(utmeast_utmnorth_heading,
+                                                    radius=positive_dist_threshold,
+                                                    return_distance=False)
+    
+    with open("/content/Project_With_ReRanking/RRT_SOP/rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl", "wb") as f:
+        pickle.dump(positives_per_query, f)
+
     train_set = ImageDataset(samples=samples, transform=train_transform)
 
     # Open test/val folder
@@ -171,9 +180,6 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     
     with open("/content/Project_With_ReRanking/RRT_SOP/rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb") as f:
         pickle.dump(indices, f)
-
-    with open("/content/Project_With_ReRanking/RRT_SOP/rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl", "wb") as f:
-        pickle.dump(positives_per_query, f)
     
     # queries_v1 folder
     query_set = ImageDataset(samples=samples_queries, transform=base_transform)
