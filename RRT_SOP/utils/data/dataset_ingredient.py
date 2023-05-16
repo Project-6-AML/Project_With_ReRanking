@@ -25,7 +25,7 @@ def config():
     train_folder = '/content/drive/MyDrive/small/train'
     test_folder = '/content/drive/MyDrive/small/val'
 
-    batch_size = 128
+    batch_size = 64
     sample_per_id = 2
     assert (batch_size % sample_per_id == 0)
     test_batch_size = 64
