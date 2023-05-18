@@ -70,6 +70,7 @@ def train_rerank(model: nn.Module,
 
     model.train()
     device = next(model.parameters()).device
+    print(f"Device while training: {device}")
     to_device = lambda x: x.to(device, non_blocking=True)
     loader_length = len(loader)
     train_losses = AverageMeter(device=device, length=loader_length)
