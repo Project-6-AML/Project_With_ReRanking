@@ -55,6 +55,7 @@ def get_loss():
 @ex.automain
 def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
     device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
+    print(f"Device: {device}")
     if cudnn_flag == 'deterministic':
         setattr(cudnn, cudnn_flag, True)
 
