@@ -31,7 +31,7 @@ def config():
     test_batch_size = 64
     sampler = 'triplet' #"random"
 
-    num_workers = 1 #8  
+    num_workers = 4 #8  
     pin_memory = True
 
     crop_size = 224
