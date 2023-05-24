@@ -145,6 +145,7 @@ def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_n
 
 @ex.automain
 def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
+    print(f"Training backbone only")
     device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
     print(f"Device: {device}")
     if cudnn_flag == 'deterministic':
@@ -219,6 +220,7 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
 
 @ex.automain
 def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
+    print(f"Training transformer only")
     device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
     print(f"Device: {device}")
     if cudnn_flag == 'deterministic':
