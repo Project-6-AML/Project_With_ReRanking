@@ -215,7 +215,7 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
         features = train_rerank_backbone(model=model, loader=loaders.train, optimizer=optimizer, scheduler=scheduler, epoch=epoch, ex=ex)
         print(f"Finished an epoch, features dim: {features.size}")
 
-    torch.save(features, 'backbone_features.pkl')
+    torch.save(features, '/content/Project_With_ReRanking/RRT_SOP/data/backbone_features.pkl')
     pprint(f"Backbone features saved. Features dim: {features.size}")
 
 #################################################################################################################################################
@@ -282,7 +282,7 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
             )
     os.makedirs(temp_dir, exist_ok=True)
 
-    features = torch.load('backbone_features.pkl')
+    features = torch.load('/content/Project_With_ReRanking/RRT_SOP/data/backbone_features.pkl')
 
     for epoch in range(epochs):
         if cudnn_flag == 'benchmark':
@@ -316,3 +316,4 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
 
 if __name__ == '__main__':
     backbone_train()
+    #transformer_train()
