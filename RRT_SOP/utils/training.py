@@ -70,7 +70,6 @@ def train_rerank(model: nn.Module,
 
     model.train()
     device = next(model.parameters()).device
-    print(f"Device while training: {device}")
     to_device = lambda x: x.to(device, non_blocking=True)
     loader_length = len(loader)
     train_losses = AverageMeter(device=device, length=loader_length)
@@ -116,6 +115,15 @@ def train_rerank(model: nn.Module,
             ex.log_scalar('train.loss', loss, step=step)
             ex.log_scalar('train.acc', acc, step=step)
 
+
+def train_rerank_backbone(model: nn.Module,
+        loader: DataLoader,
+        class_loss: nn.Module,
+        optimizer: Optimizer,
+        scheduler: _LRScheduler,
+        epoch: int,
+        ex: Experiment = None) -> None:
+    
 
 ###################################################################
 

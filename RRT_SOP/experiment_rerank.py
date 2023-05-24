@@ -64,6 +64,10 @@ def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_n
 
     torch.manual_seed(seed)
     model = get_model(num_classes=loaders.num_classes)
+
+    transformer = model.matcher
+    print(f"Transformer: {transformer}")
+
     if resume is not None:
         state_dict = torch.load(resume, map_location=torch.device('cpu'))
         if 'state' in state_dict:
