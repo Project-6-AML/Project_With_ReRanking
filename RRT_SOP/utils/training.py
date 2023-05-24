@@ -115,16 +115,6 @@ def train_rerank(model: nn.Module,
             ex.log_scalar('train.loss', loss, step=step)
             ex.log_scalar('train.acc', acc, step=step)
 
-
-def train_rerank_backbone(model: nn.Module,
-        loader: DataLoader,
-        class_loss: nn.Module,
-        optimizer: Optimizer,
-        scheduler: _LRScheduler,
-        epoch: int,
-        ex: Experiment = None) -> None:
-    
-
 ###################################################################
 
 
