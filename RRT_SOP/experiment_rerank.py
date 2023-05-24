@@ -51,7 +51,7 @@ def get_optimizer_scheduler(parameters, lr, weight_decay, scheduler_tau, schedul
 def get_loss():
     return BinaryCrossEntropyWithLogits()
 
-
+"""
 @ex.automain
 def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
     device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
@@ -140,6 +140,8 @@ def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_n
     ex.add_artifact(save_name)
 
     return best_val[1][1]
+
+"""
 
 #################################################################################################################################################
 
