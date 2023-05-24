@@ -115,6 +115,112 @@ def train_rerank(model: nn.Module,
             ex.log_scalar('train.loss', loss, step=step)
             ex.log_scalar('train.acc', acc, step=step)
 
+def train_rerank_backbone(model: nn.Module,
+        loader: DataLoader,
+        optimizer: Optimizer,
+        scheduler: _LRScheduler,
+        epoch: int,
+        ex: Experiment = None) -> None:
+    
+    model.train()
+    device = next(model.parameters()).device
+    to_device = lambda x: x.to(device, non_blocking=True)
+    loader_length = len(loader)
+    train_losses = AverageMeter(device=device, length=loader_length)
+    train_accs = AverageMeter(device=device, length=loader_length)
+
+    class_loss = nn.TripletMarginLoss(margin=1, p=2)
+
+    features = []
+
+    pbar = tqdm(loader, ncols=80, desc='Training   [{:03d}]'.format(epoch))
+    for i, (batch, labels, indices) in enumerate(pbar):
+        batch, labels, indices = map(to_device, (batch, labels, indices))
+
+        ##################################################
+        ## extract features
+        l = model(batch)[2]
+        features.append(l)
+        anchors   = l[0::3]
+        positives = l[1::3]
+        negatives = l[2::3]
+        #print(f"anchors: {anchors.size()}, positives: {positives.size()}, negatives: {negatives.size()}")
+        #p_logits, _, _ = model(None, True, src_global=None, src_local=anchors, tgt_global=None, tgt_local=positives)
+        #n_logits, _, _ = model(None, True, src_global=None, src_local=anchors, tgt_global=None, tgt_local=negatives)
+        #logits = torch.cat([p_logits, n_logits], 0)
+
+        # bsize = logits.size(0)
+        # labels = logits.new_ones(logits.size())
+        # labels[(bsize//2):] = 0
+        loss = class_loss(anchors, positives, negatives)
+        # acc = ((torch.sigmoid(logits) > 0.5).long() == labels.long()).float().mean()
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        train_losses.append(loss)
+        #train_accs.append(acc)
+
+    scheduler.step()
+    return features
+
+def train_rerank_transformer(model: nn.Module,
+        loader: DataLoader,
+        class_loss: nn.Module,
+        optimizer: Optimizer,
+        scheduler: _LRScheduler,
+        epoch: int,
+        features: List[torch.Tensor],
+        ex: Experiment = None) -> None:
+    
+    model.train()
+    device = next(model.parameters()).device
+    to_device = lambda x: x.to(device, non_blocking=True)
+    loader_length = len(loader)
+    train_losses = AverageMeter(device=device, length=loader_length)
+    train_accs = AverageMeter(device=device, length=loader_length)
+    
+    offset = 0
+
+    pbar = tqdm(loader, ncols=80, desc='Training   [{:03d}]'.format(epoch))
+    for i, (batch, labels, indices) in enumerate(pbar):
+        batch, labels, indices = map(to_device, (batch, labels, indices))
+
+        ##################################################
+        extracted = features[offset : offset + batch.size()]
+        offset += batch.size()
+
+        ## extract features
+        anchors   = extracted[0::3]
+        positives = extracted[1::3]
+        negatives = extracted[2::3]
+        #print(f"anchors: {anchors.size()}, positives: {positives.size()}, negatives: {negatives.size()}")
+        p_logits, _, _ = model(None, True, src_global=None, src_local=anchors, tgt_global=None, tgt_local=positives)
+        n_logits, _, _ = model(None, True, src_global=None, src_local=anchors, tgt_global=None, tgt_local=negatives)
+        logits = torch.cat([p_logits, n_logits], 0)
+
+        bsize = logits.size(0)
+        labels = logits.new_ones(logits.size())
+        labels[(bsize//2):] = 0
+        loss = class_loss(logits, None, labels).mean()
+        acc = ((torch.sigmoid(logits) > 0.5).long() == labels.long()).float().mean()
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        train_losses.append(loss)
+        train_accs.append(acc)
+
+        if not (i + 1) % 20:
+            step = epoch + i / loader_length
+            print('step/loss/accu/lr:', step, train_losses.last_avg.item(), train_accs.last_avg.item(), scheduler.get_last_lr()[0])
+
+    scheduler.step()
+
+
+
 ###################################################################
 
 
