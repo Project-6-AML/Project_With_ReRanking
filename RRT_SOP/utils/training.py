@@ -133,6 +133,9 @@ def train_rerank_backbone(model: nn.Module,
 
     features = []
 
+    save_size = 500
+    save_order = 0
+
     pbar = tqdm(loader, ncols=80, desc='Training   [{:03d}]'.format(epoch))
     for i, (batch, labels, indices) in enumerate(pbar):
         batch, labels, indices = map(to_device, (batch, labels, indices))
@@ -162,8 +165,14 @@ def train_rerank_backbone(model: nn.Module,
         loss.backward()
         optimizer.step()
 
-        train_losses.append(loss)
+        #train_losses.append(loss)
         #train_accs.append(acc)
+
+        if len(features) >= save_size:
+            features_to_save = torch.cat(features, 0)
+            torch.save(features_to_save, f"/content/Project_With_ReRanking/RRT_SOP/data/features_{save_order}.pt")
+            save_order += 1
+            features = []
 
     scheduler.step()
     return features
