@@ -187,8 +187,7 @@ def recall_at_ks_rerank(
             current_query = query_features[j:(j+bsize)]
             current_index = gallery_features[cache_nn_inds[j:(j+bsize), i]]
             start = time.time()
-            current_scores, _, _ = matcher(None, True, 
-                src_global=None, src_local=current_query.to(device), 
+            current_scores = matcher(src_global=None, src_local=current_query.to(device), 
                 tgt_global=None, tgt_local=current_index.to(device))
             end = time.time()
             total_time += end-start

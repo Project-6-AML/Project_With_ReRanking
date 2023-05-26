@@ -174,6 +174,7 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
     cache_nn_inds = torch.from_numpy(cache_nn_inds)
 
     model.to(device)
+    transformer.to(device)
     # if torch.cuda.device_count() > 1:
     model = nn.DataParallel(model)
     parameters = []
