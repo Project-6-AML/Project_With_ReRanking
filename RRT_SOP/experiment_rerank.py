@@ -191,7 +191,7 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
     #         scheduler.load_state_dict(state_dict['scheduler'])
 
     # setup partial function to simplify call
-    eval_function = partial(evaluate_rerank, model=transformer, cache_nn_inds=cache_nn_inds,
+    eval_function = partial(evaluate_rerank, backbone=model, transformer=transformer, cache_nn_inds=cache_nn_inds,
         recall_ks=recall_ks, query_loader=loaders.query, gallery_loader=loaders.gallery)
 
     # setup best validation logger
