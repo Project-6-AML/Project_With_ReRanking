@@ -1,7 +1,7 @@
 from sacred import Ingredient
 
-from matcher import MatchERT
-from resnet import resnet18
+from .matcher import MatchERT
+from .resnet import resnet18
 
 model_ingredient = Ingredient('model')
 
