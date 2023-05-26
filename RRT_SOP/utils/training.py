@@ -276,14 +276,16 @@ def evaluate_global(model: nn.Module,
     return recalls_cosine, nn_dists, nn_inds
 
 
-def evaluate_rerank(model: nn.Module,
+def evaluate_rerank(backbone: nn.Module,
+            transformer: nn.Module,
             cache_nn_inds: torch.Tensor,
             query_loader: DataLoader,
             gallery_loader: Optional[DataLoader],
             recall_ks: List[int]):
 
-    model.eval()
-    device = next(model.parameters()).device
+    backbone.eval()
+    transformer.eval()
+    device = next(backbone.parameters()).device
     to_device = lambda x: x.to(device, non_blocking=True)
     all_query_features, all_query_labels = [], []
     all_gallery_features, all_gallery_labels = None, None
@@ -291,7 +293,7 @@ def evaluate_rerank(model: nn.Module,
     with torch.no_grad():
         for batch, labels, _ in tqdm(query_loader, desc='Extracting query features', leave=False, ncols=80):
             batch, labels = map(to_device, (batch, labels))
-            features = model(batch)[1]
+            features = backbone(batch)[1]
             all_query_labels.append(labels)
             all_query_features.append(features.cpu())
         all_query_features = torch.cat(all_query_features, 0)
@@ -302,7 +304,7 @@ def evaluate_rerank(model: nn.Module,
             all_gallery_labels = []
             for batch, labels, _ in tqdm(gallery_loader, desc='Extracting gallery features', leave=False, ncols=80):
                 batch, labels = map(to_device, (batch, labels))
-                features = model(batch)[-1]
+                features = backbone(batch)[-1]
                 all_gallery_labels.append(labels.cpu())
                 all_gallery_features.append(features.cpu())
 
@@ -312,7 +314,7 @@ def evaluate_rerank(model: nn.Module,
         recall_function = partial(
                 recall_at_ks_rerank, 
                 query_features=all_query_features.cpu(), query_labels=all_query_labels.cpu(), ks=recall_ks,
-                matcher=model, cache_nn_inds=cache_nn_inds,
+                matcher=transformer, cache_nn_inds=cache_nn_inds,
                 gallery_features=all_gallery_features, gallery_labels=all_gallery_labels
             )
         recalls_rerank, nn_dists, nn_inds = recall_function()
