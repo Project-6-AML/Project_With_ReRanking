@@ -143,9 +143,7 @@ def train_rerank_backbone(model: nn.Module,
         ##################################################
         ## extract features
         l = model(batch)[1]
-        print(f"l device: {l.get_device()}")
         features.append(l)
-        print(f"features size: {len(features)}")
         anchors   = l[0::3]
         positives = l[1::3]
         negatives = l[2::3]
