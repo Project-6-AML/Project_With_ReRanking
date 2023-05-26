@@ -12,7 +12,8 @@ from sacred.utils import apply_backspaces_and_linefeeds
 from torch.backends import cudnn
 from torch.optim import AdamW, lr_scheduler
 
-from models.ingredient import model_ingredient, get_model
+#from models.ingredient import model_ingredient, get_model
+from models_2.ingredient import model_ingredient, get_model
 from utils import pickle_load, pickle_save
 from utils import state_dict_to_cpu, BinaryCrossEntropyWithLogits, num_of_trainable_params
 from utils.data.dataset_ingredient import data_ingredient, get_loaders
@@ -157,7 +158,7 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
     loaders, recall_ks = get_loaders()
 
     torch.manual_seed(seed)
-    model = get_model(num_classes=loaders.num_classes)
+    model, transformer = get_model(num_classes=loaders.num_classes)
 
     if resume is not None:
         state_dict = torch.load(resume, map_location=torch.device('cpu'))
