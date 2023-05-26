@@ -37,17 +37,11 @@ def resnet50():
     arch = 'resnet50'
     normalize = True
 
-@model_ingredient.named_config
-def resnet18():
-    arch = "resnet18"
-    normalize = True
-
 @model_ingredient.capture
 def get_model(
         num_classes, arch, pretrained, num_global_features, norm_layer, detach, remap, normalize, normalize_weight, set_bn_eval, dropout, num_local_features, freeze_backbone,
         ert_seq_len, ert_dim_feedforward, ert_nhead, ert_num_encoder_layers, ert_dropout, ert_activation, ert_normalize_before):
-    backbone = resnet18(pretrained=pretrained, num_classes=num_classes, num_global_features=num_global_features,
-                                num_local_features=num_local_features)
+    backbone = resnet18(pretrained=pretrained, num_local_features=num_local_features)
     transformer = MatchERT(d_global=num_global_features, d_model=num_local_features, 
             nhead=ert_nhead, num_encoder_layers=ert_num_encoder_layers, 
             dim_feedforward=ert_dim_feedforward, dropout=ert_dropout, 

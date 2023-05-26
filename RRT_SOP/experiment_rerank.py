@@ -166,6 +166,7 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
             state_dict = state_dict['state']
         model.load_state_dict(state_dict, strict=True)
     print('# of trainable parameters: ', num_of_trainable_params(model))
+    print('# of trainable parameters of the transformer: ', num_of_trainable_params(transformer))
     class_loss = get_loss()
 
     # Rerank the top-15 only during training to save time

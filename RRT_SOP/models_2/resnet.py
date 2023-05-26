@@ -12,7 +12,7 @@ from models.base_model import BaseModel
 from copy import deepcopy
 
 
-class ResNet(BaseModel):
+class ResNet(nn.Module):
     def __init__(self,
             block: nn.Module,
             layers: List[int],
