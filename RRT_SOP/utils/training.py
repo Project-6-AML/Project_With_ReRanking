@@ -14,6 +14,14 @@ from copy import deepcopy
 
 from utils.metrics import *
 
+import os
+import subprocess as sp
+
+def get_gpu_memory():
+    command = "nvidia-smi --query-gpu=memory.free --format=csv"
+    memory_free_info = sp.check_output(command.split()).decode('ascii').split('\n')[:-1][1:]
+    memory_free_values = [int(x.split()[0]) for i, x in enumerate(memory_free_info)]
+    return memory_free_values
 
 ###################################################################
 
@@ -170,10 +178,12 @@ def train_rerank_backbone(model: nn.Module,
             print(f"features_to_save dimension: {features_to_save.size()}")
             torch.save(features_to_save, f"/content/Project_With_ReRanking/RRT_SOP/data/features_{save_order}.pt")
             save_order += 1
+            print(f"Free GPU memory before deleting: {get_gpu_memory()}")
             del features
             del features_to_save
             torch.cuda.empty_cache()
             features = []
+            print(f"Free GPU memory after deleting: {get_gpu_memory()}")
 
     scheduler.step()
 
@@ -182,10 +192,12 @@ def train_rerank_backbone(model: nn.Module,
         print(f"features_to_save dimension: {features_to_save.size()}")
         torch.save(features_to_save, f"/content/Project_With_ReRanking/RRT_SOP/data/features_{save_order}.pt")
         save_order += 1
+        print(f"Free GPU memory before deleting: {get_gpu_memory()}")
         del features
         del features_to_save
         torch.cuda.empty_cache()
         features = []
+        print(f"Free GPU memory after deleting: {get_gpu_memory()}")
 
     return features
 
@@ -333,7 +345,9 @@ def evaluate_rerank(backbone: nn.Module,
             )
         recalls_rerank, nn_dists, nn_inds = recall_function()
 
+    print(f"Free GPU memory before deleting: {get_gpu_memory()}")
     del all_query_features, all_query_labels, all_gallery_features, all_gallery_labels
     torch.cuda.empty_cache()
+    print(f"Free GPU memory after deleting: {get_gpu_memory()}")
 
     return recalls_rerank, nn_dists, nn_inds
