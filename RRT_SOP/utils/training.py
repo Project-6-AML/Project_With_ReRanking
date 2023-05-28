@@ -172,6 +172,7 @@ def train_rerank_backbone(model: nn.Module,
             save_order += 1
             del features
             del features_to_save
+            torch.cuda.empty_cache()
             features = []
 
     scheduler.step()
@@ -183,6 +184,7 @@ def train_rerank_backbone(model: nn.Module,
         save_order += 1
         del features
         del features_to_save
+        torch.cuda.empty_cache()
         features = []
 
     return features
@@ -281,6 +283,9 @@ def evaluate_global(model: nn.Module,
             gallery_features=all_gallery_features, gallery_labels=all_gallery_labels
         )
         recalls_cosine, nn_dists, nn_inds = recall_function(cosine=True)
+
+        del all_query_features, all_query_labels, all_gallery_features, all_gallery_labels
+        torch.cuda.empty_cache()
     
     return recalls_cosine, nn_dists, nn_inds
 
