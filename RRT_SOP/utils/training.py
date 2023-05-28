@@ -176,6 +176,7 @@ def train_rerank_backbone(model: nn.Module,
         if len(features) >= save_size:
             features_to_save = torch.cat(features, 0)
             print(f"features_to_save dimension: {features_to_save.size()}")
+            print(f"Tensor size in bytes: {features_to_save.nelement() * features_to_save.element_size()}")
             torch.save(features_to_save, f"/content/Project_With_ReRanking/RRT_SOP/data/features_{save_order}.pt")
             save_order += 1
             print(f"Free GPU memory before deleting: {get_gpu_memory()}")
