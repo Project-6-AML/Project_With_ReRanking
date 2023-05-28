@@ -170,6 +170,8 @@ def train_rerank_backbone(model: nn.Module,
             print(f"features_to_save dimension: {features_to_save.size()}")
             torch.save(features_to_save, f"/content/Project_With_ReRanking/RRT_SOP/data/features_{save_order}.pt")
             save_order += 1
+            del features
+            del features_to_save
             features = []
 
     scheduler.step()
@@ -179,6 +181,8 @@ def train_rerank_backbone(model: nn.Module,
         print(f"features_to_save dimension: {features_to_save.size()}")
         torch.save(features_to_save, f"/content/Project_With_ReRanking/RRT_SOP/data/features_{save_order}.pt")
         save_order += 1
+        del features
+        del features_to_save
         features = []
 
     return features
