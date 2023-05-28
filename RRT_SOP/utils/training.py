@@ -141,7 +141,7 @@ def train_rerank_backbone(model: nn.Module,
 
     features = []
 
-    save_size = 500
+    save_size = 100
     save_order = 0
 
     pbar = tqdm(loader, ncols=80, desc='Training   [{:03d}]'.format(epoch))
