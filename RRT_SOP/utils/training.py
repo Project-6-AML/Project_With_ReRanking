@@ -332,4 +332,8 @@ def evaluate_rerank(backbone: nn.Module,
                 gallery_features=all_gallery_features, gallery_labels=all_gallery_labels
             )
         recalls_rerank, nn_dists, nn_inds = recall_function()
+
+    del all_query_features, all_query_labels, all_gallery_features, all_gallery_labels
+    torch.cuda.empty_cache()
+
     return recalls_rerank, nn_dists, nn_inds
