@@ -210,13 +210,13 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
             )
     os.makedirs(temp_dir, exist_ok=True)
 
-    features = []
     for epoch in range(epochs):
         if cudnn_flag == 'benchmark':
             setattr(cudnn, cudnn_flag, True)
 
-        features = train_rerank_backbone(model=model, loader=loaders.train, optimizer=optimizer, scheduler=scheduler, epoch=epoch, ex=ex)
-        print(f"Finished an epoch, features dim: {features.size}")
+        train_rerank_backbone(model=model, loader=loaders.train, optimizer=optimizer, scheduler=scheduler, epoch=epoch, ex=ex)
+    
+    print(f"Finished training the backbone")
 
     #torch.save(features, '/content/Project_With_ReRanking/RRT_SOP/data/backbone_features.pkl')
     #pprint(f"Backbone features saved. Features dim: {features.size}")
