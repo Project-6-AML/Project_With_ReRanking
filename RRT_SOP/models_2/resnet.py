@@ -51,7 +51,7 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2, dilate=replace_stride_with_dilation[2])
         # self.local_branch = self.create_local_branch(block, 512, layers[3], stride=1, dilate=False)
         # self.local_branch = deepcopy(self.layer4)
-        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        #self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
         self.remap_local = nn.Conv2d(self.backbone_features, num_local_features, kernel_size=1, stride=1, padding=0)
 
@@ -148,8 +148,8 @@ class ResNet(nn.Module):
         x = self.layer3(x)
         # l = self.local_branch(x.detach())
         l = self.layer4(x)
-        g = self.avgpool(l)
-        g = torch.flatten(g, 1)
+        #g = self.avgpool(l)
+        #g = torch.flatten(g, 1)
 
         l = self.remap_local(l)
 
@@ -157,7 +157,7 @@ class ResNet(nn.Module):
         # x = self.avgpool(x)
         # features = torch.flatten(x, 1)
         # return features
-        return g, l
+        return l
 
 
 def _resnet(arch: str, block: nn.Module, layers: List[int], pretrained: bool, progress: bool, **kwargs) -> nn.Module:

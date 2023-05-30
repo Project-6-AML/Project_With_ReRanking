@@ -150,7 +150,7 @@ def train_rerank_backbone(model: nn.Module,
 
         ##################################################
         ## extract features
-        l = model(batch)[1]
+        l = model(batch)
         features.append(l)
         anchors   = l[0::3]
         positives = l[1::3]
@@ -176,7 +176,7 @@ def train_rerank_backbone(model: nn.Module,
         if len(features) >= save_size:
             features_to_save = torch.cat(features, 0)
             print(f"features_to_save dimension: {features_to_save.size()}")
-            print(f"Tensor size in bytes: {features_to_save.nelement() * features_to_save.element_size()}")
+            print(f"Tensor to save size: {features_to_save.nelement() * features_to_save.element_size() / 1048576} MB")
             torch.save(features_to_save, f"/content/Project_With_ReRanking/RRT_SOP/data/features_{save_order}.pt")
             save_order += 1
             print(f"Free GPU memory before deleting: {get_gpu_memory()}")
@@ -191,6 +191,7 @@ def train_rerank_backbone(model: nn.Module,
     if len(features) < save_size:
         features_to_save = torch.cat(features, 0)
         print(f"features_to_save dimension: {features_to_save.size()}")
+        print(f"Tensor to save size: {features_to_save.nelement() * features_to_save.element_size() / 1048576} MB")
         torch.save(features_to_save, f"/content/Project_With_ReRanking/RRT_SOP/data/features_{save_order}.pt")
         save_order += 1
         print(f"Free GPU memory before deleting: {get_gpu_memory()}")
@@ -320,7 +321,7 @@ def evaluate_rerank(backbone: nn.Module,
     with torch.no_grad():
         for batch, labels, _ in tqdm(query_loader, desc='Extracting query features', leave=False, ncols=80):
             batch, labels = map(to_device, (batch, labels))
-            features = backbone(batch)[1]
+            features = backbone(batch)
             all_query_labels.append(labels)
             all_query_features.append(features.cpu())
         all_query_features = torch.cat(all_query_features, 0)
@@ -331,7 +332,7 @@ def evaluate_rerank(backbone: nn.Module,
             all_gallery_labels = []
             for batch, labels, _ in tqdm(gallery_loader, desc='Extracting gallery features', leave=False, ncols=80):
                 batch, labels = map(to_device, (batch, labels))
-                features = backbone(batch)[-1]
+                features = backbone(batch)
                 all_gallery_labels.append(labels.cpu())
                 all_gallery_features.append(features.cpu())
 
