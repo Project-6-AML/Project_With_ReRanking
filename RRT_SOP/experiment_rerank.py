@@ -235,7 +235,7 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
     loaders, recall_ks = get_loaders()
 
     torch.manual_seed(seed)
-    model = get_model(num_classes=loaders.num_classes)
+    model, transformer = get_model(num_classes=loaders.num_classes)
 
     if resume is not None:
         state_dict = torch.load(resume, map_location=torch.device('cpu'))
@@ -289,7 +289,7 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
         if cudnn_flag == 'benchmark':
             setattr(cudnn, cudnn_flag, True)
 
-        train_rerank_transformer(model=model, loader=loaders.train, class_loss=class_loss, optimizer=optimizer, scheduler=scheduler, epoch=epoch, ex=ex)
+        train_rerank_transformer(model=transformer, loader=loaders.train, class_loss=class_loss, optimizer=optimizer, scheduler=scheduler, epoch=epoch, ex=ex)
 
         # validation
         if cudnn_flag == 'benchmark':

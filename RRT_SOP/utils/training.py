@@ -222,14 +222,18 @@ def train_rerank_transformer(model: nn.Module,
     train_accs = AverageMeter(device=device, length=loader_length)
     
     offset = 0
+    flag = 0
     save_order = 0
+    save_size = 10
 
     pbar = tqdm(loader, ncols=80, desc='Training   [{:03d}]'.format(epoch))
     for i, (batch, labels, indices) in enumerate(pbar):
         batch, labels, indices = map(to_device, (batch, labels, indices))
+        flag += 1
 
-        features = torch.load(f"/content/Project_With_ReRanking/RRT_SOP/data/features_{save_order}.pt")
-        save_order += 1
+        if flag % save_size == 0:        
+            features = torch.load(f"/content/Project_With_ReRanking/RRT_SOP/data/features_{save_order}.pt") # Carico save_size batches
+            save_order += 1
 
         ##################################################
         extracted = features[offset : offset + batch.size()]
