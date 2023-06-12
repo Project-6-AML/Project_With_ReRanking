@@ -285,13 +285,11 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
             )
     os.makedirs(temp_dir, exist_ok=True)
 
-    features = torch.load('/content/Project_With_ReRanking/RRT_SOP/data/backbone_features.pkl')
-
     for epoch in range(epochs):
         if cudnn_flag == 'benchmark':
             setattr(cudnn, cudnn_flag, True)
 
-        train_rerank_transformer(model=model, loader=loaders.train, class_loss=class_loss, optimizer=optimizer, scheduler=scheduler, epoch=epoch, features=features, ex=ex)
+        train_rerank_transformer(model=model, loader=loaders.train, class_loss=class_loss, optimizer=optimizer, scheduler=scheduler, epoch=epoch, ex=ex)
 
         # validation
         if cudnn_flag == 'benchmark':
