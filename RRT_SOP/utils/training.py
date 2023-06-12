@@ -257,6 +257,8 @@ def train_rerank_transformer(model: nn.Module,
         if not (i + 1) % 20:
             step = epoch + i / loader_length
             print('step/loss/accu/lr:', step, train_losses.last_avg.item(), train_accs.last_avg.item(), scheduler.get_last_lr()[0])
+        
+        del features
 
     scheduler.step()
 
