@@ -239,6 +239,8 @@ def train_rerank_transformer(model: nn.Module,
         extracted = features[offset : offset + batch.size()]
         offset += batch.size()
 
+        print(f"extracted features size: {extracted.size()}")
+
         ## extract features
         anchors   = extracted[0::3]
         positives = extracted[1::3]
