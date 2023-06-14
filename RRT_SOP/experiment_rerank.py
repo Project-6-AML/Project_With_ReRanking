@@ -146,7 +146,6 @@ def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_n
 
 #################################################################################################################################################
 
-ex.automain
 def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
     print(f"Training backbone only")
     device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
@@ -223,7 +222,6 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
 
 #################################################################################################################################################
 
-@ex.automain
 def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
     print(f"Training transformer only")
     device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
@@ -315,7 +313,7 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
 
     return best_val[1][1]
 
-
-if __name__ == '__main__':
-    #backbone_train()
-    transformer_train()
+@ex.automain
+def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
+    #backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds)
+    transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds)
