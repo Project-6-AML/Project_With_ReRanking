@@ -146,7 +146,7 @@ def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_n
 
 #################################################################################################################################################
 
-@ex.automain
+ex.automain
 def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
     print(f"Training backbone only")
     device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
@@ -223,7 +223,7 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
 
 #################################################################################################################################################
 
-#@ex.automain
+@ex.automain
 def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
     print(f"Training transformer only")
     device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
@@ -250,6 +250,7 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
     cache_nn_inds = torch.from_numpy(cache_nn_inds)
 
     model.to(device)
+    transformer.to(device)
     # if torch.cuda.device_count() > 1:
     model = nn.DataParallel(model)
     parameters = []

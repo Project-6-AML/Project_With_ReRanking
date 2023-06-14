@@ -225,29 +225,28 @@ def train_rerank_transformer(model: nn.Module,
     flag = 0
     save_order = 0
     save_size = 10
+    features = "Prova"
 
     pbar = tqdm(loader, ncols=80, desc='Training   [{:03d}]'.format(epoch))
     for i, (batch, labels, indices) in enumerate(pbar):
         batch, labels, indices = map(to_device, (batch, labels, indices))
-        flag += 1
 
-        if flag % save_size == 0:        
+        if flag % save_size == 0:
+            del features        
             features = torch.load(f"/content/Project_With_ReRanking/RRT_SOP/data/features_{save_order}.pt") # Carico save_size batches
             save_order += 1
 
         ##################################################
-        extracted = features[offset : offset + batch.size()]
-        offset += batch.size()
-
-        print(f"extracted features size: {extracted.size()}")
+        extracted = features[offset : offset + batch.size(0)]
+        offset += batch.size(0)
 
         ## extract features
         anchors   = extracted[0::3]
         positives = extracted[1::3]
         negatives = extracted[2::3]
         #print(f"anchors: {anchors.size()}, positives: {positives.size()}, negatives: {negatives.size()}")
-        p_logits, _, _ = model(None, True, src_global=None, src_local=anchors, tgt_global=None, tgt_local=positives)
-        n_logits, _, _ = model(None, True, src_global=None, src_local=anchors, tgt_global=None, tgt_local=negatives)
+        p_logits = model(src_global=None, src_local=anchors, tgt_global=None, tgt_local=positives)
+        n_logits = model(src_global=None, src_local=anchors, tgt_global=None, tgt_local=negatives)
         logits = torch.cat([p_logits, n_logits], 0)
 
         bsize = logits.size(0)
@@ -263,11 +262,7 @@ def train_rerank_transformer(model: nn.Module,
         train_losses.append(loss)
         train_accs.append(acc)
 
-        if not (i + 1) % 20:
-            step = epoch + i / loader_length
-            print('step/loss/accu/lr:', step, train_losses.last_avg.item(), train_accs.last_avg.item(), scheduler.get_last_lr()[0])
-        
-        del features
+        flag += 1
 
     scheduler.step()
 
