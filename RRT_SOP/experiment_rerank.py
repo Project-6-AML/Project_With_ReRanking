@@ -52,98 +52,6 @@ def get_optimizer_scheduler(parameters, lr, weight_decay, scheduler_tau, schedul
 def get_loss():
     return BinaryCrossEntropyWithLogits()
 
-"""
-@ex.automain
-def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
-    device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
-    print(f"Device: {device}")
-    if cudnn_flag == 'deterministic':
-        setattr(cudnn, cudnn_flag, True)
-
-    torch.manual_seed(seed)
-    loaders, recall_ks = get_loaders()
-
-    torch.manual_seed(seed)
-    model = get_model(num_classes=loaders.num_classes)
-
-    if resume is not None:
-        state_dict = torch.load(resume, map_location=torch.device('cpu'))
-        if 'state' in state_dict:
-            state_dict = state_dict['state']
-        model.load_state_dict(state_dict, strict=True)
-    print('# of trainable parameters: ', num_of_trainable_params(model))
-    class_loss = get_loss()
-
-    # Rerank the top-15 only during training to save time
-    cache_nn_inds = pickle_load(cache_nn_inds)[:, :15]
-    cache_nn_inds = torch.from_numpy(cache_nn_inds)
-
-    model.to(device)
-    # if torch.cuda.device_count() > 1:
-    model = nn.DataParallel(model)
-    parameters = []
-    if no_bias_decay:
-        parameters.append({'params': [par for par in model.parameters() if par.dim() != 1]})
-        parameters.append({'params': [par for par in model.parameters() if par.dim() == 1], 'weight_decay': 0})
-    else:
-        parameters.append({'params': model.parameters()})
-    optimizer, scheduler = get_optimizer_scheduler(parameters=parameters)
-    # if resume is not None:
-    #     state_dict = torch.load(resume, map_location=torch.device('cpu'))
-    #     if 'optim' in state_dict:
-    #         optimizer.load_state_dict(state_dict['optim'])
-    #     if 'scheduler' in state_dict:
-    #         scheduler.load_state_dict(state_dict['scheduler'])
-
-    # setup partial function to simplify call
-    eval_function = partial(evaluate_rerank, model=model, cache_nn_inds=cache_nn_inds,
-        recall_ks=recall_ks, query_loader=loaders.query, gallery_loader=loaders.gallery)
-
-    # setup best validation logger
-    metrics = eval_function()[0]
-    pprint(metrics)
-    best_val = (0, metrics, deepcopy(model.state_dict()))
-
-    torch.manual_seed(seed)
-    # saving
-    save_name = osp.join(temp_dir, 
-            '{}_{}.pt'.format(
-                        ex.current_run.config['model']['arch'],
-                        ex.current_run.config['dataset']['name']
-                    )
-            )
-    os.makedirs(temp_dir, exist_ok=True)
-    for epoch in range(epochs):
-        if cudnn_flag == 'benchmark':
-            setattr(cudnn, cudnn_flag, True)
-
-        train_rerank(model=model, loader=loaders.train, class_loss=class_loss, optimizer=optimizer, scheduler=scheduler, epoch=epoch, ex=ex)
-
-        # validation
-        if cudnn_flag == 'benchmark':
-            setattr(cudnn, cudnn_flag, False)
-        metrics = eval_function()[0]
-        print('Validation [{:03d}]'.format(epoch)), pprint(metrics)
-        ex.log_scalar('val.recall@1', metrics[1], step=epoch + 1)
-
-        # save model dict if the chosen validation metric is better
-        if metrics[1] >= best_val[1][1]:
-            best_val = (epoch + 1, metrics, deepcopy(model.state_dict()))
-            torch.save(
-                {
-                    'state': state_dict_to_cpu(best_val[2]),
-                    'optim': optimizer.state_dict(),
-                    'scheduler': scheduler.state_dict(),
-                }, save_name)
-
-    # logging
-    ex.info['recall'] = best_val[1]
-    ex.add_artifact(save_name)
-
-    return best_val[1][1]
-
-"""
-
 #################################################################################################################################################
 
 def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
@@ -183,12 +91,6 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
     else:
         parameters.append({'params': model.parameters()})
     optimizer, scheduler = get_optimizer_scheduler(parameters=parameters)
-    # if resume is not None:
-    #     state_dict = torch.load(resume, map_location=torch.device('cpu'))
-    #     if 'optim' in state_dict:
-    #         optimizer.load_state_dict(state_dict['optim'])
-    #     if 'scheduler' in state_dict:
-    #         scheduler.load_state_dict(state_dict['scheduler'])
 
     # setup partial function to simplify call
     eval_function = partial(evaluate_rerank, backbone=model, transformer=transformer, cache_nn_inds=cache_nn_inds,
@@ -200,25 +102,34 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
     best_val = (0, metrics, deepcopy(model.state_dict()))
 
     torch.manual_seed(seed)
-    # saving
-    save_name = osp.join(temp_dir, 
-            '{}_{}.pt'.format(
-                        ex.current_run.config['model']['arch'],
-                        ex.current_run.config['dataset']['name']
-                    )
-            )
-    os.makedirs(temp_dir, exist_ok=True)
+
+    save_name = "/content/drive/MyDrive/models/backbone.pth"
 
     for epoch in range(epochs):
         if cudnn_flag == 'benchmark':
             setattr(cudnn, cudnn_flag, True)
 
         train_rerank_backbone(model=model, loader=loaders.train, optimizer=optimizer, scheduler=scheduler, epoch=epoch, ex=ex)
+
+        # validation
+        if cudnn_flag == 'benchmark':
+            setattr(cudnn, cudnn_flag, False)
+        metrics = eval_function()[0]
+        print('Validation [{:03d}]'.format(epoch)), pprint(metrics)
+        ex.log_scalar('val.recall@1', metrics[1], step=epoch + 1)
+
+        # save model dict if the chosen validation metric is better
+        if metrics[1] >= best_val[1][1]:
+            best_val = (epoch + 1, metrics, deepcopy(model.state_dict()))
+            torch.save(
+                {
+                    'state': state_dict_to_cpu(best_val[2]),
+                    'optim': optimizer.state_dict(),
+                    'scheduler': scheduler.state_dict(),
+                }, save_name)
+            resume = save_name
     
     print(f"Finished training the backbone")
-
-    #torch.save(features, '/content/Project_With_ReRanking/RRT_SOP/data/backbone_features.pkl')
-    #pprint(f"Backbone features saved. Features dim: {features.size}")
 
 #################################################################################################################################################
 
@@ -234,6 +145,8 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
 
     torch.manual_seed(seed)
     model, transformer = get_model(num_classes=loaders.num_classes)
+
+    resume = "/content/drive/MyDrive/models/backbone.pth"
 
     if resume is not None:
         state_dict = torch.load(resume, map_location=torch.device('cpu'))
@@ -258,12 +171,6 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
     else:
         parameters.append({'params': model.parameters()})
     optimizer, scheduler = get_optimizer_scheduler(parameters=parameters)
-    # if resume is not None:
-    #     state_dict = torch.load(resume, map_location=torch.device('cpu'))
-    #     if 'optim' in state_dict:
-    #         optimizer.load_state_dict(state_dict['optim'])
-    #     if 'scheduler' in state_dict:
-    #         scheduler.load_state_dict(state_dict['scheduler'])
 
     # setup partial function to simplify call
     eval_function = partial(evaluate_rerank, backbone=model, transformer=transformer, cache_nn_inds=cache_nn_inds,
@@ -283,6 +190,7 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
                     )
             )
     os.makedirs(temp_dir, exist_ok=True)
+    save_name = "/content/drive/MyDrive/models/transformer.pth"
 
     for epoch in range(epochs):
         if cudnn_flag == 'benchmark':
