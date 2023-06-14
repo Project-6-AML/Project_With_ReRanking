@@ -173,9 +173,6 @@ def train_rerank_backbone(model: nn.Module,
         #train_losses.append(loss)
         #train_accs.append(acc)
 
-        if save_order > 5:
-            break
-
         if len(features) >= save_size:
             features_to_save = torch.cat(features, 0)
             print(f"features_to_save dimension: {features_to_save.size()}")
