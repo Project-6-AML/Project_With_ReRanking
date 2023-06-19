@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional
 import faiss, time
 from tqdm import tqdm 
-
+import numpy as np
 
 
 import torch
@@ -206,9 +206,26 @@ def recall_at_ks_rerank(
     closest_indices = torch.gather(cache_nn_inds, -1, indices).numpy()   
 
     max_k = max(ks)
-    recalls = {}
-    for k in ks:
-        indices = closest_indices[:, :k]
-        recalls[k] = (q_l[:, None] == g_l[indices]).any(1).mean()
-    return {k: round(v * 100, 2) for k, v in recalls.items()}, closest_dists, closest_indices
+    #recalls = {}
+    #for k in ks:
+    #    indices = closest_indices[:, :k]
+    #    recalls[k] = (q_l[:, None] == g_l[indices]).any(1).mean()
+
+    recalls = np.zeros(len(ks))
+    for query_index, preds in enumerate(closest_indices):
+        for i, n in enumerate(ks):
+            # OR(AND)
+            if np.any(np.in1d(preds[:n], cache_nn_inds[query_index])):
+                recalls[i:] += 1
+                break
+
+    recalls = recalls / query_features.size(0) * 100
+
+    #[R@1, R@5, R@10, R@20]
+    
+    ret = {k: round(v, 2) for k, v in zip(ks, recalls)}
+
+    #{k: round(v * 100, 2) for k, v in recalls.items()}
+
+    return ret, closest_dists, closest_indices
 
