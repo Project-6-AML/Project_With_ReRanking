@@ -167,6 +167,8 @@ def recall_at_ks_rerank(
     to_cpu_numpy = lambda x: x.cpu().numpy()
     q_l, g_l = map(to_cpu_numpy, [query_labels, gallery_labels])
 
+    print(q_l[0])
+
     device = next(matcher.parameters()).device
 
     num_samples, top_k = cache_nn_inds.size()
@@ -219,7 +221,7 @@ def recall_at_ks_rerank(
     #            recalls[i:] += 1
     #            break
 
-    recalls = recalls / query_features.size(0) * 100
+    #recalls = recalls / query_features.size(0) * 100
 
     #[R@1, R@5, R@10, R@20]
     
