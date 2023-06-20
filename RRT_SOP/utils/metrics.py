@@ -167,7 +167,7 @@ def recall_at_ks_rerank(
     to_cpu_numpy = lambda x: x.cpu().numpy()
     q_l, g_l = map(to_cpu_numpy, [query_labels, gallery_labels])
 
-    print(q_l[0])
+    print(q_l[0]) #0,2,6
 
     device = next(matcher.parameters()).device
 

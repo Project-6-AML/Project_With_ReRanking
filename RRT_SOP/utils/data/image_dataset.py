@@ -9,6 +9,7 @@ class ImageDataset(Dataset):
     def __init__(self, samples: list, transform):
         self.transform = transform
 
+        #samples: "path", (1,2,3)
         self.categories = sorted(list(set([entry[1] for entry in samples])))
         
         self.cat_to_label = dict(zip(self.categories, range(len(self.categories))))

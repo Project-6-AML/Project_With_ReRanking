@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader, RandomSampler, BatchSampler
 from torchvision import transforms
 import numpy as np
 import pickle
+import math
 
 from .image_dataset import ImageDataset
 from .utils import RandomReplacedIdentitySampler, TripletSampler
@@ -159,6 +160,8 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     class_id_queries = [get__class_id(*m, M, alpha)
                             for m in queries_utms]
     
+    print(len(set(class_id_queries)))
+    
     images_per_class_database = defaultdict(list)
     for image_path, class_id in zip(database_paths, class_id_database):
         images_per_class_database[class_id].append(image_path)
@@ -183,6 +186,14 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     #                                                radius=positive_dist_threshold,
     #                                                return_distance=False)
     distances, indices = knn.kneighbors(queries_utms, n_neighbors=20)
+
+    print(indices)
+
+    indices = []
+    for t in queries_utms:
+        indices.append(calculate_neighbors(t, database_utms, 20))
+
+    print(indices)
     
     with open("/content/Project_With_ReRanking/RRT_SOP/rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb") as f:
         pickle.dump(indices, f)
@@ -254,3 +265,17 @@ def get__class_id(utm_east, utm_north, heading, M, alpha):
     class_id = (rounded_utm_east, rounded_utm_north, rounded_heading)
 
     return class_id
+
+def calculate_neighbors(t, candidates, n_neighbors):
+    # (1,2,3)
+    distances = []
+
+    for i, n in enumerate(candidates):
+        distances.append(distance(t[0], n[0], t[1], n[1], t[2], n[2]))
+
+    dist, indices = sorted(distances)
+
+    return indices[:n_neighbors]
+
+def distance(x1, x2, y1, y2, z1, z2):
+    return math.sqrt((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2) 
