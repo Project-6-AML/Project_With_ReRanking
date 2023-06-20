@@ -182,7 +182,7 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     #positives_per_query = knn.radius_neighbors(queries_utms,
     #                                                radius=positive_dist_threshold,
     #                                                return_distance=False)
-    distances, indices = knn.kneighbors(queries_utms, n_neighbors=100)
+    distances, indices = knn.kneighbors(queries_utms, n_neighbors=20)
     
     with open("/content/Project_With_ReRanking/RRT_SOP/rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb") as f:
         pickle.dump(indices, f)
