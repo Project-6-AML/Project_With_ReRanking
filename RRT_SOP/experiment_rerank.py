@@ -77,7 +77,7 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
     class_loss = get_loss()
 
     # Rerank the top-15 only during training to save time
-    cache_nn_inds = pickle_load(cache_nn_inds)[:, :15]
+    cache_nn_inds = pickle_load(cache_nn_inds)[:, :20]
     cache_nn_inds = torch.from_numpy(cache_nn_inds)
 
     model.to(device)
@@ -158,7 +158,7 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
     class_loss = get_loss()
 
     # Rerank the top-15 only during training to save time
-    cache_nn_inds = pickle_load(cache_nn_inds)[:, :15]
+    cache_nn_inds = pickle_load(cache_nn_inds)[:, :100]
     cache_nn_inds = torch.from_numpy(cache_nn_inds)
 
     model.to(device)
