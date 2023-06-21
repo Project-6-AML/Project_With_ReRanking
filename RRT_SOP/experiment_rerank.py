@@ -231,7 +231,8 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
         parameters.append({'params': model.parameters()})
     optimizer, scheduler = get_optimizer_scheduler(parameters=parameters ,lr = 0.001)
     
-    generate_features(model, loaders.train)
+    with torch.no_grad():
+        generate_features(model, loaders.train)
 
     # setup partial function to simplify call
     eval_function = partial(evaluate_rerank, backbone=model, transformer=transformer, cache_nn_inds=cache_nn_inds,
