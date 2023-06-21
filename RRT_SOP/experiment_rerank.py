@@ -139,7 +139,9 @@ def generate_features(model: nn.Module,
         loader: DataLoader,
         ) -> None:
     
-    device = torch.device('cuda:0')
+    model.eval()
+    device = next(model.parameters()).devicedevice = torch.device('cuda:0')
+    print(device)
     to_device = lambda x: x.to(device, non_blocking=True)
 
     features = []
@@ -211,16 +213,16 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
     
     #backbone = torch.load("/content/drive/MyDrive/models/backbone.pth")
 
-    generate_features(model, loaders.train)
-
     # Rerank the top-15 only during training to save time
     cache_nn_inds = pickle_load(cache_nn_inds)[:, :20]
     cache_nn_inds = torch.from_numpy(cache_nn_inds)
 
     model.to(device)
     transformer.to(device)
+    
     # if torch.cuda.device_count() > 1:
     model = nn.DataParallel(model)
+        
     parameters = []
     if no_bias_decay:
         parameters.append({'params': [par for par in model.parameters() if par.dim() != 1]})
@@ -228,6 +230,8 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
     else:
         parameters.append({'params': model.parameters()})
     optimizer, scheduler = get_optimizer_scheduler(parameters=parameters ,lr = 0.001)
+    
+    generate_features(model, loaders.train)
 
     # setup partial function to simplify call
     eval_function = partial(evaluate_rerank, backbone=model, transformer=transformer, cache_nn_inds=cache_nn_inds,
