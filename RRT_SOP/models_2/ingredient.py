@@ -26,7 +26,7 @@ def config():
     ert_seq_len=102
     ert_dim_feedforward=1024
     ert_nhead=4
-    ert_num_encoder_layers=6
+    ert_num_encoder_layers=3
     ert_dropout=0.0 
     ert_activation="relu"
     ert_normalize_before=False

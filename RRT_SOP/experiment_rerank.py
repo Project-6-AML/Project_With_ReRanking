@@ -157,6 +157,8 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
     print('# of trainable parameters of the transformer: ', num_of_trainable_params(transformer))
     class_loss = get_loss()
 
+    generate_features(backbone, loaders.train)
+
     # Rerank the top-15 only during training to save time
     cache_nn_inds = pickle_load(cache_nn_inds)[:, :20]
     cache_nn_inds = torch.from_numpy(cache_nn_inds)
@@ -171,7 +173,7 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
         parameters.append({'params': [par for par in model.parameters() if par.dim() == 1], 'weight_decay': 0})
     else:
         parameters.append({'params': model.parameters()})
-    optimizer, scheduler = get_optimizer_scheduler(parameters=parameters)
+    optimizer, scheduler = get_optimizer_scheduler(parameters=parameters ,lr = 0.001)
 
     # setup partial function to simplify call
     eval_function = partial(evaluate_rerank, backbone=model, transformer=transformer, cache_nn_inds=cache_nn_inds,
