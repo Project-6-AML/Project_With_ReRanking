@@ -140,7 +140,7 @@ def generate_features(model: nn.Module,
         ) -> None:
     
     model.eval()
-    device = next(model.parameters()).devicedevice = torch.device('cuda:0')
+    device = next(model.parameters()).device
     print(device)
     to_device = lambda x: x.to(device, non_blocking=True)
 
