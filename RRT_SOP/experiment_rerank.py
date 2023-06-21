@@ -209,7 +209,7 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
     print('# of trainable parameters of the transformer: ', num_of_trainable_params(transformer))
     class_loss = get_loss()
     
-    backbone = pickle_load("/content/drive/MyDrive/models/backbone.pth")
+    backbone = torch.load("/content/drive/MyDrive/models/backbone.pth")
 
     generate_features(backbone, loaders.train)
 
