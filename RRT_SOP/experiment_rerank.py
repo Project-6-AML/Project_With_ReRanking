@@ -11,6 +11,8 @@ from sacred import SETTINGS
 from sacred.utils import apply_backspaces_and_linefeeds
 from torch.backends import cudnn
 from torch.optim import AdamW, lr_scheduler
+from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 #from models.ingredient import model_ingredient, get_model
 from models_2.ingredient import model_ingredient, get_model
@@ -133,6 +135,56 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
 
 #################################################################################################################################################
 
+def generate_features(model: nn.Module,
+        loader: DataLoader,
+        ) -> None:
+    
+    device = next(model.parameters()).device
+    to_device = lambda x: x.to(device, non_blocking=True)
+
+    features = []
+
+    save_size = 20
+    save_order = 0
+
+    pbar = tqdm(loader, ncols=80, desc='Extracting features...')
+    for i, (batch, labels, indices) in enumerate(pbar):
+        batch, labels, indices = map(to_device, (batch, labels, indices))
+
+        ##################################################
+        ## extract features
+        l = model(batch)
+        features.append(l)
+        
+        if len(features) >= save_size:
+            features_to_save = torch.cat(features, 0)
+            #print(f"features_to_save dimension: {features_to_save.size()}")
+            #print(f"Tensor to save size: {features_to_save.nelement() * features_to_save.element_size() / 1048576} MB")
+            torch.save(features_to_save, f"/content/drive/MyDrive/features/features_{save_order}.pt")
+            save_order += 1
+            #print(f"Free GPU memory before deleting: {get_gpu_memory()}")
+            del features
+            del features_to_save
+            torch.cuda.empty_cache()
+            features = []
+            #print(f"Free GPU memory after deleting: {get_gpu_memory()}")
+
+    if len(features) < save_size:
+        features_to_save = torch.cat(features, 0)
+        #print(f"features_to_save dimension: {features_to_save.size()}")
+        #print(f"Tensor to save size: {features_to_save.nelement() * features_to_save.element_size() / 1048576} MB")
+        torch.save(features_to_save, f"/content/drive/MyDrive/features/features_{save_order}.pt")
+        save_order += 1
+        #print(f"Free GPU memory before deleting: {get_gpu_memory()}")
+        del features
+        del features_to_save
+        torch.cuda.empty_cache()
+        features = []
+        #print(f"Free GPU memory after deleting: {get_gpu_memory()}")
+
+    return features
+
+
 def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
     print(f"Training transformer only")
     device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
@@ -156,6 +208,8 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
     print('# of trainable parameters: ', num_of_trainable_params(model))
     print('# of trainable parameters of the transformer: ', num_of_trainable_params(transformer))
     class_loss = get_loss()
+    
+    backbone = pickle_load("/content/drive/MyDrive/models/backbone.pth")
 
     generate_features(backbone, loaders.train)
 
