@@ -146,7 +146,7 @@ def generate_features(model: nn.Module,
 
     features = []
 
-    save_size = 20
+    save_size = 10
     save_order = 0
 
     pbar = tqdm(loader, ncols=80, desc='Extracting features...')
