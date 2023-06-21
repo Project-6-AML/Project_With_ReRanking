@@ -58,7 +58,7 @@ def get_loss():
 
 def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
     print(f"Training backbone only")
-    device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
+    device = torch.device('cuda:0')
     print(f"Device: {device}")
     if cudnn_flag == 'deterministic':
         setattr(cudnn, cudnn_flag, True)
@@ -139,7 +139,7 @@ def generate_features(model: nn.Module,
         loader: DataLoader,
         ) -> None:
     
-    device = next(model.parameters()).device
+    device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
     to_device = lambda x: x.to(device, non_blocking=True)
 
     features = []
