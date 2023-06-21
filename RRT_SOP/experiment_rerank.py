@@ -209,9 +209,9 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
     print('# of trainable parameters of the transformer: ', num_of_trainable_params(transformer))
     class_loss = get_loss()
     
-    backbone = torch.load("/content/drive/MyDrive/models/backbone.pth")
+    #backbone = torch.load("/content/drive/MyDrive/models/backbone.pth")
 
-    generate_features(backbone, loaders.train)
+    generate_features(model, loaders.train)
 
     # Rerank the top-15 only during training to save time
     cache_nn_inds = pickle_load(cache_nn_inds)[:, :20]
