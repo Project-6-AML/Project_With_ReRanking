@@ -148,6 +148,7 @@ def generate_features(model: nn.Module,
 
     save_size = 10
     save_order = 0
+    arrived_at = 600
 
     pbar = tqdm(loader, ncols=80, desc='Extracting features...')
     for i, (batch, labels, indices) in enumerate(pbar):
@@ -155,8 +156,11 @@ def generate_features(model: nn.Module,
 
         ##################################################
         ## extract features
-        l = model(batch)
-        features.append(l)
+        if save_order < arrived_at:
+            l = model(batch)
+            features.append(l)
+        else:
+            continue
         
         if len(features) >= save_size:
             features_to_save = torch.cat(features, 0)
