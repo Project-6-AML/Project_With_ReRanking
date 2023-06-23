@@ -149,6 +149,8 @@ def generate_features(model: nn.Module,
     save_size = 10
     save_order = 0
     arrived_at = 0
+    length = 0
+
 
     pbar = tqdm(loader, ncols=80, desc='Extracting features...')
     for i, (batch, labels, indices) in enumerate(pbar):
@@ -156,13 +158,19 @@ def generate_features(model: nn.Module,
 
         ##################################################
         ## extract features
-        if save_order < arrived_at + 1:
-            continue
+        if save_order <= arrived_at:
+          length += 1
+          if length >= save_size:
+            save_order += 1
+            length = 0
+          continue
         else:
-            l = model(batch)
-            features.append(l)
+          l = model(batch)
+          features.append(l)
+          length += 1
         
-        if len(features) >= save_size:
+        if length >= save_size:
+            length = 0
             features_to_save = torch.cat(features, 0)
             #print(f"features_to_save dimension: {features_to_save.size()}")
             #print(f"Tensor to save size: {features_to_save.nelement() * features_to_save.element_size() / 1048576} MB")
@@ -175,7 +183,8 @@ def generate_features(model: nn.Module,
             features = []
             #print(f"Free GPU memory after deleting: {get_gpu_memory()}")
 
-    if len(features) < save_size:
+    if length < save_size:
+        length = 0
         features_to_save = torch.cat(features, 0)
         #print(f"features_to_save dimension: {features_to_save.size()}")
         #print(f"Tensor to save size: {features_to_save.nelement() * features_to_save.element_size() / 1048576} MB")
