@@ -148,7 +148,9 @@ def generate_features(model: nn.Module,
 
     save_size = 10
     save_order = 0
-    arrived_at = -1
+    #Mettere l'ultimo numero che si trova nella cartella features
+    # Quindi se si è arrivati a features_100.pt mettere 100, con -1 si parte da 0
+    arrived_at = -1 
     length = 0
 
 
