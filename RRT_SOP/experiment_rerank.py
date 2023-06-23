@@ -148,7 +148,7 @@ def generate_features(model: nn.Module,
 
     save_size = 10
     save_order = 0
-    arrived_at = 0
+    arrived_at = -1
     length = 0
 
 
