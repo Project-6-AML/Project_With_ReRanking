@@ -156,7 +156,6 @@ def generate_features(model: nn.Module,
 
     pbar = tqdm(loader, ncols=80, desc='Extracting features...')
     for i, (batch, labels, indices) in enumerate(pbar):
-        batch, labels, indices = map(to_device, (batch, labels, indices))
 
         ##################################################
         ## extract features
@@ -167,6 +166,7 @@ def generate_features(model: nn.Module,
             length = 0
           continue
         else:
+          batch, labels, indices = map(to_device, (batch, labels, indices))
           l = model(batch)
           features.append(l)
           length += 1
