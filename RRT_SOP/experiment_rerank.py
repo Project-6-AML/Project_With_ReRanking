@@ -150,12 +150,15 @@ def generate_features(model: nn.Module,
     save_order = 0
     #Mettere l'ultimo numero che si trova nella cartella features
     # Quindi se si è arrivati a features_100.pt mettere 100, con -1 si parte da 0
-    arrived_at = -1 
+    arrived_at = 420
     length = 0
 
+    it = iter(loader)
+    num_batches = len(loader)
+    print(num_batches)
 
-    pbar = tqdm(loader, ncols=80, desc='Extracting features...')
-    for i, (batch, labels, indices) in enumerate(pbar):
+    for i in tqdm(range(num_batches)):
+        batch, labels, indices = next(it)
 
         ##################################################
         ## extract features
